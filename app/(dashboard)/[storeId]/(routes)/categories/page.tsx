@@ -10,6 +10,10 @@ async function CategoriesPage(
     where:{
       storeId:params.storeId
     },
+    include:{
+      billboard:true,
+
+    },
     orderBy:{
       createdAt:"desc"
     }
@@ -19,6 +23,7 @@ async function CategoriesPage(
       return ({
         id:item.id,
         name:item.name,
+        billboardLabel:item.billboard.label,
         createdAt: format(item.createdAt,"MMMM do, yyyy")
       }
 
