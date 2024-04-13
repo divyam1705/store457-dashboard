@@ -12,7 +12,6 @@ async function CategoriesPage(
     },
     include:{
       billboard:true,
-
     },
     orderBy:{
       createdAt:"desc"

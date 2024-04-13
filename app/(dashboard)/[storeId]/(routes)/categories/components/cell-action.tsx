@@ -34,7 +34,7 @@ function CellAction({ data }: CellActionProps) {
             toast({
                 variant: "destructive",
                 title: "Something went wrong",
-                description: "Could not delete the Category. "
+                description: "Could not delete the Category. Make sure to delete all products using this category first."
             })
         }
         finally {
