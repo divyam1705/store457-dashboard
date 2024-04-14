@@ -1,8 +1,8 @@
 "use client"
 
-import { Billboard } from '@prisma/client'
+import { Size } from '@prisma/client'
 import React, { useState } from 'react'
-import { BillboardColumn } from './columns'
+import { SizeColumn } from './columns'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
@@ -13,7 +13,7 @@ import AlertModal from '@/components/modals/alert-model';
 
 
 interface CellActionProps {
-    data: BillboardColumn;
+    data: SizeColumn;
 }
 function CellAction({ data }: CellActionProps) {
     const [loading, setLoading] = useState(false);
@@ -22,19 +22,19 @@ function CellAction({ data }: CellActionProps) {
     async function onDelete() {
         try {
             setLoading(true);
-            await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+            await axios.delete(`/api/${params.storeId}/sizes/${data.id}`);
             router.refresh();
             toast({
                 variant: "success",
                 title: "Success",
-                description: "Billboard Deleted Successfully"
+                description: "Size Deleted Successfully"
             })
 
         } catch (error) {
             toast({
                 variant: "destructive",
                 title: "Something went wrong",
-                description: "Could not delete the Billboard. Make sure you delete all categories using this billboard first"
+                description: "Could not delete the Size. Make sure you delete all products using this size first"
             })
         }
         finally {
@@ -50,7 +50,7 @@ function CellAction({ data }: CellActionProps) {
         toast({
             variant: "success",
             title: "Copied",
-            description: "Billboard Id copied to Clipboard"
+            description: "Size Id copied to Clipboard"
         })
     }
     const router = useRouter();
@@ -73,7 +73,7 @@ function CellAction({ data }: CellActionProps) {
                     <DropdownMenuLabel>
                         Actions
                     </DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/billboards/${data.id}`)}>
+                    <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/sizes/${data.id}`)}>
                         <Edit className='mr-2 h-4 w-4' />
                         Update
                     </DropdownMenuItem>
