@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
 // import useOrigin from '@/hooks/use-origin';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Color} from '@prisma/client'
+import { Color } from '@prisma/client'
 import axios from 'axios';
 import { Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -21,7 +21,9 @@ interface ColorFormProps {
 }
 const formSchema = z.object({
     name: z.string().min(1),
-    value: z.string().min(1)
+    value: z.string().min(4).regex(/^#/, {
+        message: "String must be valid hex code",
+    })
 });
 type ColorFormValues = z.infer<typeof formSchema>;
 function ColorForm({ initialData }: ColorFormProps) {
@@ -40,18 +42,18 @@ function ColorForm({ initialData }: ColorFormProps) {
     const toastMessage = initialData ? "Color Edited" : "Color Created";
     const router = useRouter();
     const onSubmit = async (data: ColorFormValues) => {
-        let title,description;
+        let title, description;
         try {
             setLoading(true);
             if (initialData) {
                 await axios.patch(`/api/${params.storeId}/colors/${params.colorId}`, data)
-                title="Success";
-                description="Color Updated Successfully"
+                title = "Success";
+                description = "Color Updated Successfully"
             }
-            else{
+            else {
                 await axios.post(`/api/${params.storeId}/colors`, data);
-                title="Success";
-                description="Color Created Successfully"
+                title = "Success";
+                description = "Color Created Successfully"
             }
             router.refresh();
 
@@ -120,7 +122,7 @@ function ColorForm({ initialData }: ColorFormProps) {
             <Separator />
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 w-full'>
-                    
+
                     <div className='grid grid-cols-3 gap-8'>
                         <FormField
                             control={form.control}
@@ -137,19 +139,25 @@ function ColorForm({ initialData }: ColorFormProps) {
                             }}
                         />
                         <FormField
-                        control={form.control}
-                        name="value"
-                        render={({ field }) => {
-                            return <FormItem>
-                                <FormLabel>Value</FormLabel>
-                                <FormControl>
-                                <Input disabled={loading} placeholder='Color value' {...field} />
-                                </FormControl>
-                                <FormMessage />
+                            control={form.control}
+                            name="value"
+                            render={({ field }) => {
+                                return <FormItem>
+                                    <FormLabel>Hex Value</FormLabel>
+                                    <FormControl>
+                                        <div className='flex items-center gap-x-4'>
+                                            
+                                            <Input disabled={loading} placeholder='Color value' {...field} />
+                                            <div className='border p-4 rounded-full'
+                                            style={{backgroundColor:field.value}}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
 
-                            </FormItem>
-                        }}
-                    />
+                                </FormItem>
+                            }}
+                        />
 
                     </div>
                     <Button disabled={loading} className='ml-auto' type='submit'>
