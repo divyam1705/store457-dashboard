@@ -15,10 +15,13 @@ function ImageUpload({ disabled, onChange, onRemove, value }: ImageUploadProps) 
     const [isMounted, setIsMounted] = useState(false);
     useEffect(() => {
         setIsMounted(true);
+        // console.log(value);
     }, []);
 
     const onUpload = (result: any) => {
+
         onChange(result.info.secure_url);
+        console.log(value);
     }
     if (!isMounted) {
         return null;
@@ -42,7 +45,7 @@ function ImageUpload({ disabled, onChange, onRemove, value }: ImageUploadProps) 
                     </div>
                 ))}
             </div>
-            <CldUploadWidget onSuccess={onUpload} uploadPreset='kbq7qci7'>
+            <CldUploadWidget onUpload={onUpload} uploadPreset='kbq7qci7'>
                 {({ open }) => {
                     const onClick = () => {
                         open();
