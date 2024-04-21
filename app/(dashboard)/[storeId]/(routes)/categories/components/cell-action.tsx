@@ -39,6 +39,7 @@ function CellAction({ data }: CellActionProps) {
         }
         finally {
             setLoading(false);
+            setOpen(false);
         }
 
 
