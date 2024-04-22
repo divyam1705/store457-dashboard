@@ -1,4 +1,6 @@
 "use client"
+
+import { ThemeProvider } from "@/providers/theme-provider"
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -17,26 +19,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const setNewView = async ()=>{
-  //   const newrow=await prismadb.store.create({
-  //     data:{
-  //       userId:"lol",
-  //       name:"SHoes",
-
-  //     }
-  //   })
-   
-  // }
-  // setNewView();
   return (
     <RecoilRoot>
-    <html lang="en">
-      <body className={inter.className}>
-        <ModalProvider/>
-        {children}
-        <Toaster/>
+      <html lang="en">
+        <body className={inter.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+          >
+            <ModalProvider />
+            {children}
+            <Toaster />
+          </ThemeProvider>
         </body>
-    </html>
+      </html>
     </RecoilRoot>
   );
 }
