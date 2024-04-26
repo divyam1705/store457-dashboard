@@ -2,6 +2,17 @@ import prismadb from "@/lib/prismadb";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 //this route is to create a new category
+
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -11,7 +22,7 @@ export async function POST(
     const user = await superbase.auth.getUser();
     const userId = user.data.user?.id;
     const body = await req.json();
-    const { name, billboardId  } = body;
+    const { name, billboardId } = body;
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 401 });
     }
@@ -40,7 +51,7 @@ export async function POST(
         storeId: params.storeId,
       },
     });
-    
+
     return NextResponse.json(category);
   } catch (error) {
     console.log("[CATEGORY_POST]", error);
@@ -60,8 +71,14 @@ export async function GET(
       where: {
         storeId: params.storeId,
       },
+      include: {
+        billboard: true,
+        
+      },
     });
-    return NextResponse.json(categories);
+    return NextResponse.json(categories,{
+      headers:corsHeaders
+    });
   } catch (error) {
     console.log("[CATEGORIES_GET]", error);
     return new NextResponse("Internal error", { status: 500 });

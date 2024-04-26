@@ -13,8 +13,8 @@ async function ProductsPage(
     },
     include:{
       category:true,
-      size:true,
-      color:true
+      color:true,
+      stocks:true
     },
     orderBy:{
       createdAt:"desc"
@@ -30,7 +30,7 @@ async function ProductsPage(
         isFeatured:item.isFeatured,
         isArchived:item.isArchived,
         color:item.color.value,
-        size:item.size.name,
+        sizes:item.stocks.filter((stk)=>stk.stockValue!==0).map((stock) => stock.sizeValue).join(", "),
         createdAt: format(item.createdAt,"MMMM do, yyyy")
       }
 

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 import { connect } from "http2";
+import { Product } from "@prisma/client";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +19,11 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds } = await req.json();
+  const { orderedProducts } = await req.json();//changed product id with size
+  // console.log(orderedProducts);
+  const productIds= orderedProducts.map((prod:{productId:string,sizeValue:string})=>prod.productId);
+  // console.log(productIds);
+
   if (!productIds || productIds.length === 0) {
     return NextResponse.json("Product Ids are required", { status: 400 });
   }
@@ -31,15 +36,18 @@ export async function POST(
     }
   });
   const line_items:Stripe.Checkout.SessionCreateParams.LineItem[]=[];
-  products.forEach((product)=>{
+  orderedProducts.forEach((product:{productId:string,sizeValue:string})=>{
+    const cur_prod=products.find(prod=>prod.id===product.productId);
+    if(!cur_prod){return;}
+    // console.log(cur_prod.price);
     line_items.push({
         quantity:1,
         price_data:{
             currency:"INR",
             product_data:{
-                name:product.name
+                name:cur_prod.name+" "+product.sizeValue,
             },
-            unit_amount:product.price.toNumber()*100
+            unit_amount:cur_prod.price.toNumber()*100
         }
     })
   });
@@ -50,12 +58,13 @@ export async function POST(
         storeId:params.storeId,
         isPaid:false,
         orderItems:{
-            create: productIds.map((productId:string)=>({
+            create: orderedProducts.map((prod:{productId:string,sizeValue:string})=>({
                 product:{
                     connect:{
-                        id:productId
+                        id:prod.productId
                     }
-                }
+                },
+                sizeValue:prod.sizeValue
             }))
         }
     }

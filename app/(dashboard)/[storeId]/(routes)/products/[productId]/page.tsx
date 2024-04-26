@@ -11,7 +11,8 @@ async function ProductPage({
             id:productId
         },
         include:{
-          images:true
+          images:true,
+          stocks:true
         }
     });
     const categories = await prismadb.category.findMany({

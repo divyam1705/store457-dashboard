@@ -48,7 +48,33 @@ export async function POST(req: Request) {
             orderItems:true
         }
     });
-    const productIds = order.orderItems.map((orderItem)=>orderItem.productId)
+    const sizes = await prismadb.size.findMany({});
+    const paidProducts = order.orderItems.map((orderItem)=>(
+      {
+      id:orderItem.productId,
+      sizeId:sizes.find(size=>size.value===orderItem.sizeValue)?.id
+    }
+    ));
+      console.log(paidProducts);
+    paidProducts.forEach(async(prod) => {
+
+      const currentStock = await prismadb.stock.findMany({
+        where: {
+            productId: prod.id,
+            sizeId: prod.sizeId
+        }
+    });
+    console.log(currentStock);
+      await prismadb.stock.updateMany({
+        where:{
+          productId:prod.id,
+          sizeId:prod.sizeId
+        },
+        data:{
+          stockValue:currentStock[0].stockValue
+        }
+      })
+    });
     // out of stock
 
     // await prismadb.product.updateMany({

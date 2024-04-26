@@ -62,7 +62,7 @@ model Size{
     store Store @relation("StoreToSize",fields:[storeId],references: [id])
     name String
     value String
-    products Product[]
+    stocks Stock[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -92,8 +92,7 @@ model Product{
   price Decimal
   isFeatured Boolean @default(false)
   isArchived Boolean @default(false)
-  sizeId String
-  size Size @relation(fields: [sizeId],references: [id])
+  stocks Stock[]
   colorId String
   color Color @relation(fields: [colorId],references: [id])
   images Image[]
@@ -109,6 +108,21 @@ model Image{
   url String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Stock{
+  id String @id @default(uuid())
+  productId String
+  product Product @relation(fields: [productId],references: [id], onDelete: Cascade)
+  sizeId String
+  size Size @relation(fields: [sizeId],references: [id], onDelete: Cascade)
+  stockValue Int  @default(0)
+  sizeValue String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // @@index([sizeId])
+  // @@index([productId])
 }
 
 model Order{
@@ -129,5 +143,5 @@ model OrderItem{
   order Order @relation(fields: [orderId],references: [id])
   productId String
   product Product @relation(fields: [productId],references: [id])
-
+  sizeValue String
 }

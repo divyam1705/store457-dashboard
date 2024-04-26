@@ -8,6 +8,7 @@ import ImageUpload from '@/components/ui/image-upload';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import StockUpload from '@/components/ui/stock-upload';
 import { toast } from '@/components/ui/use-toast';
 // import useOrigin from '@/hooks/use-origin';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,7 +35,7 @@ const formSchema = z.object({
     }), //setting min item price to 50
     categoryId: z.string().min(1),
     colorId: z.string().min(1),
-    sizeId: z.string().min(1),
+    stocks: z.object({ sizeId: z.string().min(1), stockValue: z.number(), sizeValue: z.string().min(1) }).array(),
     isFeatured: z.boolean().default(false).optional(),
     isArchived: z.boolean().default(false).optional()
 });
@@ -55,7 +56,7 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
             price: 0,
             categoryId: "",
             colorId: "",
-            sizeId: "",
+            stocks: [],
             isFeatured: false,
             isArchived: false
         }
@@ -224,39 +225,7 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
                                 </FormItem>)}
 
                         />
-                        <FormField
-                            control={form.control}
-                            name="sizeId"
-                            render={({ field }) =>
-                            (
-                                <FormItem>
-                                    <FormLabel>Size</FormLabel>
-                                    <Select
-                                        disabled={loading}
-                                        onValueChange={field.onChange}
-                                        value={field.value}
-                                        defaultValue={field.value} >
-                                        <FormControl>
-                                            <SelectTrigger >
-                                                <SelectValue defaultValue={field.value}
-                                                    placeholder="Select a Size">
 
-                                                </SelectValue>
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent >
-                                            {sizes.map((item) => {
-                                                return (
-                                                    <SelectItem key={item.id} value={item.id}>
-                                                        <div>{item.name}</div>
-                                                    </SelectItem>)
-                                            })}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>)}
-
-                        />
                         <FormField
                             control={form.control}
                             name="colorId"
@@ -293,7 +262,7 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
                                 </FormItem>)}
 
                         />
-                        
+
                     </div>
                     <div className='gap-6 flex'>
                         <FormField
@@ -303,6 +272,7 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
                                 return <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 max-w-[300px]'>
                                     <FormControl>
                                         <Checkbox
+                                            disabled={loading}
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
                                         />
@@ -325,6 +295,7 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
                                 return <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 max-w-[300px]'>
                                     <FormControl>
                                         <Checkbox
+                                            disabled={loading}
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
                                         />
@@ -341,6 +312,32 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
                             }}
                         />
                     </div>
+                    <div><FormField
+                        control={form.control}
+                        name="stocks"
+                        render={({ field }) =>
+                        (
+                            <FormItem>
+                                <FormLabel>Size & Stock</FormLabel>
+                                <FormControl>
+                                    <StockUpload
+                                        sizes={sizes}
+                                        disabled={loading}
+                                        onInitialize={(arr: { sizeId: string, stockValue: number, sizeValue: string }[]) => field.onChange([...arr])}
+                                        onChange={(updatedStock) => field.onChange(field.value.map((stock) => {
+                                            if (stock.sizeId === updatedStock.sizeId) {
+                                                stock.stockValue = updatedStock.stockValue;
+                                            }
+                                            return stock;
+                                        }))}
+                                        // onChange={(stock) => field.onChange([...field.value, stock])}
+                                        value={field.value} //array of stocks with size id and value being the number of items
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>)}
+
+                    /></div>
                     <Button disabled={loading} className='ml-auto' type='submit'>
                         {initialData ? "Save Changes" : "Create Product"}
                     </Button>
