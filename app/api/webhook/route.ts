@@ -71,7 +71,7 @@ export async function POST(req: Request) {
           sizeId:prod.sizeId
         },
         data:{
-          stockValue:currentStock[0].stockValue
+          stockValue:currentStock[0].stockValue-1
         }
       })
     });
