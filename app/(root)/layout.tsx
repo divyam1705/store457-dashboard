@@ -1,3 +1,4 @@
+import Navbar from '@/components/navbar';
 import prismadb from '@/lib/prismadb';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
@@ -14,7 +15,12 @@ async function SetupLayout({children}:{children:React.ReactNode}) {
         redirect("/sign-up");
     }
     
-    const store= await prismadb.store.findFirst({});
+    const store= await prismadb.store.findFirst({
+      where:{
+        userId:user.id
+      }
+      
+    });
     if(store){
         // console.log(user);
         redirect(`/${store.id}`);
