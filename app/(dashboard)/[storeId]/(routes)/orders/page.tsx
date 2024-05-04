@@ -28,6 +28,7 @@ async function OrdersPage(
       return ({
         id: item.id,
         phone: item.phone,
+        email: item.email,
         address: item.address,
         products: item.orderItems.map((orderItem) => `${orderItem.product.name} ${orderItem.sizeValue}`).join(", "),
         totalPrice: formatter.format(item.orderItems.reduce((total, item) => {

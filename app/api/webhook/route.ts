@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   }
   const session = event.data.object as Stripe.Checkout.Session;
   const address = session?.customer_details?.address;
+  const email= session?.customer_details?.email;
 
   const addressComponents = [
     address?.line1,
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
       sizeId:sizes.find(size=>size.value===orderItem.sizeValue)?.id
     }
     ));
-      console.log(paidProducts);
+      // console.log(paidProducts);
     paidProducts.forEach(async(prod) => {
 
       const currentStock = await prismadb.stock.findMany({
