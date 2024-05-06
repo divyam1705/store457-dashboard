@@ -12,6 +12,7 @@ export type OrderColumn = {
   totalPrice:string
   products: string
   createdAt:string
+  promoCode:string
 }
 
 export const columns: ColumnDef<OrderColumn>[] = [
@@ -36,7 +37,12 @@ export const columns: ColumnDef<OrderColumn>[] = [
     header: "Total Price",
   },
   {
+    accessorKey: "promoCode",
+    header: "PromoCode",
+  },
+  {
     accessorKey: "isPaid",
     header: "Paid",
-  }
+  },
+
 ]

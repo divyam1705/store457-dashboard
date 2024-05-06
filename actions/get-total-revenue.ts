@@ -12,13 +12,14 @@ export const getTotalRevenue = async (storeId:string)=>{
                 include:{
                     product:true
                 }
-            }
+            },
+            promoCode:true
         }
     });
 
     const totalRevenue = paidOrders.reduce((total,order)=>{
         const orderTotal = order.orderItems.reduce((orderSum,item)=>{
-                return orderSum + item.product.price.toNumber();
+                return orderSum + Math.floor(item.product.price.toNumber() - Number(order.promoCode.value)*item.product.price.toNumber()/100);
         },0);
         return total+orderTotal;
     },0);

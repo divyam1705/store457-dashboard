@@ -17,7 +17,9 @@ async function OrdersPage(
         include: {
           product: true
         }
-      }
+      },
+      promoCode:true
+
     },
     orderBy: {
       createdAt: "desc"
@@ -30,9 +32,10 @@ async function OrdersPage(
         phone: item.phone,
         email: item.email,
         address: item.address,
+        promoCode:item.promoCode.name,
         products: item.orderItems.map((orderItem) => `${orderItem.product.name} ${orderItem.sizeValue}`).join(", "),
-        totalPrice: formatter.format(item.orderItems.reduce((total, item) => {
-          return total + Number(item.product.price)
+        totalPrice: formatter.format(item.orderItems.reduce((total, prod) => {
+          return total + Math.floor(Number(prod.product.price) - Number(item.promoCode.value)*Number(prod.product.price)/100)
         }, 0)),
         isPaid:item.isPaid,
         createdAt: format(item.createdAt, "MMMM do, yyyy")
