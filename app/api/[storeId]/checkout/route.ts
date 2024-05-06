@@ -19,7 +19,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { orderedProducts,promoCodeId } = await req.json();//changed product id with size
+  const { orderedProducts,promoCodeId,userEmail } = await req.json();//changed product id with size
   // console.log(orderedProducts);
   if (!promoCodeId ) {
     return NextResponse.json("Promo Code Id Required", { status: 400 });
@@ -67,6 +67,7 @@ export async function POST(
 
   const order = await prismadb.order.create({
     data:{
+      email:userEmail,
       promoCodeId:promoCodeId,
         storeId:params.storeId,
         isPaid:false,
