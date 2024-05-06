@@ -19,14 +19,18 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { orderedProducts } = await req.json();//changed product id with size
+  const { orderedProducts,promoCodeId } = await req.json();//changed product id with size
   // console.log(orderedProducts);
+  if (!promoCodeId ) {
+    return NextResponse.json("Promo Code Id Required", { status: 400 });
+  }
   const productIds= orderedProducts.map((prod:{productId:string,sizeValue:string})=>prod.productId);
   // console.log(productIds);
 
   if (!productIds || productIds.length === 0) {
     return NextResponse.json("Product Ids are required", { status: 400 });
   }
+
 
   const products = await prismadb.product.findMany({
     where:{
@@ -35,6 +39,14 @@ export async function POST(
         }
     }
   });
+ const promocode=await prismadb.promoCode.findUnique({
+  where:{
+    id:promoCodeId
+  }
+ })
+ if(!promocode){
+  return NextResponse.json("Valid Promo Code  Required", { status: 400 });
+ }
   const line_items:Stripe.Checkout.SessionCreateParams.LineItem[]=[];
   orderedProducts.forEach((product:{productId:string,sizeValue:string})=>{
     const cur_prod=products.find(prod=>prod.id===product.productId);
@@ -47,7 +59,7 @@ export async function POST(
             product_data:{
                 name:cur_prod.name+" "+product.sizeValue,
             },
-            unit_amount:cur_prod.price.toNumber()*100
+            unit_amount:cur_prod.price.toNumber()*100 - Number(promocode?.value)*cur_prod.price.toNumber()
         }
     })
   });
@@ -55,6 +67,7 @@ export async function POST(
 
   const order = await prismadb.order.create({
     data:{
+      promoCodeId:promoCodeId,
         storeId:params.storeId,
         isPaid:false,
         orderItems:{

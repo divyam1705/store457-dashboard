@@ -21,6 +21,7 @@ model Store{
   billboards Billboard[] @relation("StoreToBillboard")
   categories Category[] @relation("StoreToCategory")
   sizes Size[] @relation("StoreToSize")
+  promoCodes PromoCode[] @relation("StoreToPromoCode")
   colors Color[] @relation("StoreToColor")
   products Product[] @relation("StoreToProduct")
   orders Order[] @relation("StoreToOrder")
@@ -134,6 +135,8 @@ model Order{
   phone String @default("")
   address String @default("")
   email String @default("")
+  promoCodeId String 
+  promoCode PromoCode @relation(fields: [promoCodeId],references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -145,4 +148,17 @@ model OrderItem{
   productId String
   product Product @relation(fields: [productId],references: [id])
   sizeValue String
+}
+
+model PromoCode{
+    id String @id @default(uuid())
+    storeId String
+    store Store @relation("StoreToPromoCode",fields:[storeId],references: [id])
+    name String
+    value String
+    orders Order[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([storeId])
 }
