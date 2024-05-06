@@ -59,7 +59,7 @@ export async function POST(
             product_data:{
                 name:cur_prod.name+" "+product.sizeValue,
             },
-            unit_amount:cur_prod.price.toNumber()*100 - Number(promocode?.value)*cur_prod.price.toNumber()
+            unit_amount:Math.floor(cur_prod.price.toNumber()*100 - Number(promocode?.value)*cur_prod.price.toNumber())
         }
     })
   });
