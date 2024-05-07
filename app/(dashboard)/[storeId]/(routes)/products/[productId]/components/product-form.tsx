@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import StockUpload from '@/components/ui/stock-upload';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 // import useOrigin from '@/hooks/use-origin';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,7 +38,9 @@ const formSchema = z.object({
     colorId: z.string().min(1),
     stocks: z.object({ sizeId: z.string().min(1), stockValue: z.number(), sizeValue: z.string().min(1) }).array(),
     isFeatured: z.boolean().default(false).optional(),
-    isArchived: z.boolean().default(false).optional()
+    isArchived: z.boolean().default(false).optional(),
+    description: z.string().min(1),
+    details: z.string().min(1)
 });
 type ProductFormValues = z.infer<typeof formSchema>;
 function ProductForm({ initialData, categories, sizes, colors }: ProductFormProps) {
@@ -57,6 +60,8 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
             categoryId: "",
             colorId: "",
             stocks: [],
+            description:"",
+            details:"",
             isFeatured: false,
             isArchived: false
         }
@@ -338,6 +343,35 @@ function ProductForm({ initialData, categories, sizes, colors }: ProductFormProp
                             </FormItem>)}
 
                     /></div>
+                    <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => {
+                                return <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea className="max-w-lg resize-none" disabled={loading} placeholder='Product description...' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+
+                                </FormItem>
+                            }}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="details"
+                            render={({ field }) => {
+                                return <FormItem>
+                                    <FormLabel>Details</FormLabel>
+                                    <FormControl>
+                                        <Textarea className="resize-none max-w-lg" disabled={loading} placeholder='Product details...' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+
+                                </FormItem>
+                            }}
+                        />
+                        
                     <Button disabled={loading} className='ml-auto' type='submit'>
                         {initialData ? "Save Changes" : "Create Product"}
                     </Button>

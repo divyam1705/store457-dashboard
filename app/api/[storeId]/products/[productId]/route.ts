@@ -19,7 +19,7 @@ export async function GET(
         images: true,
         category: true,
         color: true,
-        stocks:true
+        stocks: true,
       },
     });
     return NextResponse.json(product);
@@ -45,6 +45,8 @@ export async function PATCH(
       colorId,
       images,
       stocks,
+      description,
+      details,
       isFeatured,
       isArchived,
     } = body;
@@ -72,6 +74,12 @@ export async function PATCH(
     if (!params.productId) {
       return new NextResponse("Product Id is Required", { status: 400 });
     }
+    if (!description) {
+      return new NextResponse("Description is Required", { status: 400 });
+    }
+    if (!details) {
+      return new NextResponse("Details are Required", { status: 400 });
+    }
     const storebyUserId = prismadb.store.findFirst({
       where: {
         id: params.storeId,
@@ -92,6 +100,8 @@ export async function PATCH(
         categoryId,
         isFeatured,
         isArchived,
+        description,
+        details,
         storeId: params.storeId,
         images: {
           deleteMany: {},
