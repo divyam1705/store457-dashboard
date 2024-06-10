@@ -1,7 +1,7 @@
 // import Stripe from "stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-
+import { emailConfirmation } from "./components/email-confirmation";
 // import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 import axios from "axios";
@@ -94,10 +94,10 @@ export async function POST(req: Request) {
       orderId:order.id,
       email: order.email,
       name:name,
-      amount:amount
+      amount:amount.toString()
 
     };
-  const emailresp=await axios.post(`/api/emailconfirmation`,orderDetails);
+  const emailresp=await emailConfirmation(orderDetails);
   console.log(emailresp);
   // console.log("after update");
   // out of stock
