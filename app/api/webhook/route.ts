@@ -2,7 +2,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { stripe } from "@/lib/stripe";
+// import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 
 export async function POST(req: Request) {
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     id: orderItem.productId,
     sizeId: sizes.find((size) => size.value === orderItem.sizeValue)?.id,
   }));
-  console.log(paidProducts);
+  // console.log(paidProducts);
   async function updateStock() {
     paidProducts.forEach(async (prod) => {
       const currentStock = await prismadb.stock.findMany({
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
           sizeId: prod.sizeId,
         },
       });
-      console.log(currentStock);
+      // console.log("old",currentStock[0].stockValue);
       const updatedStock = await prismadb.stock.updateMany({
         where: {
           productId: prod.id,
@@ -79,9 +79,9 @@ export async function POST(req: Request) {
           stockValue: currentStock[0].stockValue - 1,
         },
       });
-      console.log(updatedStock);
+      // console.log("new",updatedStock);
     });
-    console.log("done update");
+    // console.log("done update");
   }
   await updateStock();
   console.log("after update");
