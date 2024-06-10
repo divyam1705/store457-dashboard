@@ -8,8 +8,8 @@ import axios from "axios";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  console.log(body);
-  console.log(body.content);
+  const amount = body.content.order.amount;
+  const name = body.content.order.card.name_on_card;
   // console.log(body.content.order.order_id);
   if (body.event_name !== "ORDER_SUCCEEDED") {
     return;
@@ -63,8 +63,6 @@ export async function POST(req: Request) {
     sizeId: sizes.find((size) => size.value === orderItem.sizeValue)?.id,
   }));
 
-
-  
   // console.log(paidProducts);
   async function updateStock() {
     const updatePromises = paidProducts.map(async (prod) => {
@@ -86,21 +84,20 @@ export async function POST(req: Request) {
       });
       // console.log("new", updatedStock);
     });
-  
+
     await Promise.all(updatePromises);
     // console.log("done update");
   }
-  
-  await updateStock();
-  // const orderDetails={
-  //     orderId:order.id,
-  //     email: order.email,
 
-  //   };
-  // await axios.post(
-  //   `api/emailconfirmation`,
-    
-  // );
+  await updateStock();
+  const orderDetails={
+      orderId:order.id,
+      email: order.email,
+      name:name,
+      amount:amount
+
+    };
+  axios.post(`api/emailconfirmation`,orderDetails);
   // console.log("after update");
   // out of stock
 
