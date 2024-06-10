@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       sizeId:sizes.find(size=>size.value===orderItem.sizeValue)?.id
     }
     ));
-      // console.log(paidProducts);
+      console.log(paidProducts);
     paidProducts.forEach(async(prod) => {
 
       const currentStock = await prismadb.stock.findMany({
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
             sizeId: prod.sizeId
         }
     });
-    // console.log(currentStock);
+    console.log(currentStock);
       await prismadb.stock.updateMany({
         where:{
           productId:prod.id,
@@ -81,6 +81,7 @@ export async function POST(req: Request) {
         }
       })
     });
+    console.log("after update");
     // out of stock
 
     // await prismadb.product.updateMany({
