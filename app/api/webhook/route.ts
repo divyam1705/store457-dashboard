@@ -62,14 +62,14 @@ export async function POST(req: Request) {
   }));
   console.log(paidProducts);
   async function updateStock() {
-    paidProducts.forEach(async (prod) => {
+    const updatePromises = paidProducts.map(async (prod) => {
       const currentStock = await prismadb.stock.findMany({
         where: {
           productId: prod.id,
           sizeId: prod.sizeId,
         },
       });
-      console.log("old",currentStock[0].stockValue);
+      console.log("old", currentStock[0].stockValue);
       const updatedStock = await prismadb.stock.updateMany({
         where: {
           productId: prod.id,
@@ -79,11 +79,15 @@ export async function POST(req: Request) {
           stockValue: currentStock[0].stockValue - 1,
         },
       });
-      console.log("new",updatedStock);
+      console.log("new", updatedStock);
     });
+  
+    await Promise.all(updatePromises);
     console.log("done update");
   }
+  
   await updateStock();
+  
   console.log("after update");
   // out of stock
 
