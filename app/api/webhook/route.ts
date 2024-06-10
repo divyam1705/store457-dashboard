@@ -8,11 +8,12 @@ import prismadb from "@/lib/prismadb";
 export async function POST(req: Request) {
   const body = await req.json();
   // console.log(body);
-  // console.log(body.content.order.order_id); 
-  if(body.event_name!=="ORDER_SUCCEEDED"){return
+  // console.log(body.content.order.order_id);
+  if (body.event_name !== "ORDER_SUCCEEDED") {
+    return;
     new NextResponse(`Order Not Succeeded`, {
-          status: 400,
-        });
+      status: 400,
+    });
   }
   // const signature = headers().get("Stripe-Signature") as string;
 
@@ -43,57 +44,59 @@ export async function POST(req: Request) {
   // ];
   // const addressString = addressComponents.filter((c) => c !== null).join(", ");
   // if (event.type === "checkout.session.completed") {
-    const order = await prismadb.order.update({
-        where:{
-            id:body.content.order.order_id,
-        },
-        data:{
-            isPaid: true,
-        },
-        include:{
-            orderItems:true
-        }
-    });
-    const sizes = await prismadb.size.findMany({});
-    const paidProducts = order.orderItems.map((orderItem)=>(
-      {
-      id:orderItem.productId,
-      sizeId:sizes.find(size=>size.value===orderItem.sizeValue)?.id
-    }
-    ));
-      console.log(paidProducts);
-    paidProducts.forEach(async(prod) => {
-
+  const order = await prismadb.order.update({
+    where: {
+      id: body.content.order.order_id,
+    },
+    data: {
+      isPaid: true,
+    },
+    include: {
+      orderItems: true,
+    },
+  });
+  const sizes = await prismadb.size.findMany({});
+  const paidProducts = order.orderItems.map((orderItem) => ({
+    id: orderItem.productId,
+    sizeId: sizes.find((size) => size.value === orderItem.sizeValue)?.id,
+  }));
+  console.log(paidProducts);
+  async function updateStock() {
+    paidProducts.forEach(async (prod) => {
       const currentStock = await prismadb.stock.findMany({
         where: {
-            productId: prod.id,
-            sizeId: prod.sizeId
-        }
-    });
-    console.log(currentStock);
-      await prismadb.stock.updateMany({
-        where:{
-          productId:prod.id,
-          sizeId:prod.sizeId
+          productId: prod.id,
+          sizeId: prod.sizeId,
         },
-        data:{
-          stockValue:currentStock[0].stockValue-1
-        }
-      })
+      });
+      console.log(currentStock);
+      const updatedStock = await prismadb.stock.updateMany({
+        where: {
+          productId: prod.id,
+          sizeId: prod.sizeId,
+        },
+        data: {
+          stockValue: currentStock[0].stockValue - 1,
+        },
+      });
+      console.log(updatedStock);
     });
-    console.log("after update");
-    // out of stock
+    console.log("done update");
+  }
+  await updateStock();
+  console.log("after update");
+  // out of stock
 
-    // await prismadb.product.updateMany({
-    //     where:{
-    //         id:{
-    //             in:[...productIds]
-    //         }
-    //     },
-    //     data:{
-    //         isArchived: true
-    //     }
-    // });
+  // await prismadb.product.updateMany({
+  //     where:{
+  //         id:{
+  //             in:[...productIds]
+  //         }
+  //     },
+  //     data:{
+  //         isArchived: true
+  //     }
+  // });
   // }
-  return new NextResponse(null,{status:200})
+  return new NextResponse(null, { status: 200 });
 }
