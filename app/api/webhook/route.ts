@@ -97,7 +97,8 @@ export async function POST(req: Request) {
       amount:amount
 
     };
-  axios.post(`api/emailconfirmation`,orderDetails);
+  const emailresp=await axios.post(`/api/emailconfirmation`,orderDetails);
+  console.log(emailresp);
   // console.log("after update");
   // out of stock
 
