@@ -4,10 +4,12 @@ import { NextResponse } from "next/server";
 
 // import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
+import axios from "axios";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  // console.log(body);
+  console.log(body);
+  console.log(body.content);
   // console.log(body.content.order.order_id);
   if (body.event_name !== "ORDER_SUCCEEDED") {
     return;
@@ -60,6 +62,9 @@ export async function POST(req: Request) {
     id: orderItem.productId,
     sizeId: sizes.find((size) => size.value === orderItem.sizeValue)?.id,
   }));
+
+
+  
   // console.log(paidProducts);
   async function updateStock() {
     const updatePromises = paidProducts.map(async (prod) => {
@@ -87,7 +92,15 @@ export async function POST(req: Request) {
   }
   
   await updateStock();
-  
+  // const orderDetails={
+  //     orderId:order.id,
+  //     email: order.email,
+
+  //   };
+  // await axios.post(
+  //   `api/emailconfirmation`,
+    
+  // );
   // console.log("after update");
   // out of stock
 
