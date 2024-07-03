@@ -15,7 +15,18 @@ export type OrderColumn = {
   promoCode:string
 }
 
+
+
 export const columns: ColumnDef<OrderColumn>[] = [
+  {
+    accessorKey: "id",
+    header: "Order Id",
+    // cell:({row})=>(
+    //   <div className=" ">
+    //     {row.original.id}
+    //   </div>
+    // )
+  },
   {
     accessorKey: "products",
     header: "Products",
@@ -43,6 +54,6 @@ export const columns: ColumnDef<OrderColumn>[] = [
   {
     accessorKey: "isPaid",
     header: "Paid",
-  },
+  }
 
 ]

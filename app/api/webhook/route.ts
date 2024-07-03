@@ -98,7 +98,7 @@ export async function POST(req: Request) {
 
     };
   const emailresp=await emailConfirmation(orderDetails);
-  console.log(emailresp);
+  // console.log(emailresp);
   // console.log("after update");
   // out of stock
 

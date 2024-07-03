@@ -18,7 +18,7 @@ function OrderClient({ data }: OrderClientProps) {
     <>
       <Heading title={`Orders (${data.length})`} description='Manage orders for your store' />
       <Separator />
-      <DataTable searchKey='products' columns={columns} data={data} />
+      <DataTable searchKey='id' columns={columns} data={data} />
     </>
   )
 }
