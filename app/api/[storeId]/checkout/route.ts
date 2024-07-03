@@ -51,6 +51,9 @@ export async function POST(
         in: productIds,
       },
     },
+    include: {
+      color: true,
+    },
   });
   const promocode = await prismadb.promoCode.findUnique({
     where: {
@@ -70,7 +73,7 @@ export async function POST(
       if (!cur_prod) {
         return;
       }
-      description += cur_prod.name + " " + product.sizeValue + " ";
+      description += cur_prod.name + " " + product.sizeValue + " " + cur_prod.color.name + " ";
       amount += Math.floor(
         cur_prod.price.toNumber() * 100 -
           Number(promocode?.value) * cur_prod.price.toNumber()
@@ -119,7 +122,7 @@ export async function POST(
     orderId: order.id,
     email: userEmail,
     phone: userPhone,
-    amount: Math.floor(amount/100),
+    amount: Math.floor(amount / 100),
     description: description,
   };
   // console.log(hdfcOrderData);

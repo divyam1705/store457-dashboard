@@ -15,10 +15,12 @@ async function OrdersPage(
     include: {
       orderItems: {
         include: {
-          product: true
+          product: {
+            include: { color: true }
+          }
         }
       },
-      promoCode:true
+      promoCode: true
 
     },
     orderBy: {
@@ -32,12 +34,12 @@ async function OrdersPage(
         phone: item.phone,
         email: item.email,
         address: item.address,
-        promoCode:item.promoCode.name,
-        products: item.orderItems.map((orderItem) => `${orderItem.product.name} ${orderItem.sizeValue}`).join(", "),
+        promoCode: item.promoCode.name,
+        products: item.orderItems.map((orderItem) => `${orderItem.product.name} ${orderItem.sizeValue} ${orderItem.product.color.name}`).join(", "),
         totalPrice: formatter.format(item.orderItems.reduce((total, prod) => {
-          return total + Math.floor(Number(prod.product.price) - Number(item.promoCode.value)*Number(prod.product.price)/100)
+          return total + Math.floor(Number(prod.product.price) - Number(item.promoCode.value) * Number(prod.product.price) / 100)
         }, 0)),
-        isPaid:item.isPaid,
+        isPaid: item.isPaid,
         createdAt: format(item.createdAt, "MMMM do, yyyy")
       }
       )

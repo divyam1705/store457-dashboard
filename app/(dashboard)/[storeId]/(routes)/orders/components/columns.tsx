@@ -5,14 +5,14 @@ import { ColumnDef } from "@tanstack/react-table"
 
 export type OrderColumn = {
   id: string
-  email:string
+  email: string
   phone: string
-  address:string
-  isPaid:boolean
-  totalPrice:string
+  address: string
+  isPaid: boolean
+  totalPrice: string
   products: string
-  createdAt:string
-  promoCode:string
+  createdAt: string
+  promoCode: string
 }
 
 
@@ -54,6 +54,10 @@ export const columns: ColumnDef<OrderColumn>[] = [
   {
     accessorKey: "isPaid",
     header: "Paid",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Date",
   }
 
 ]
