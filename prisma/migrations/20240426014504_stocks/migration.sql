@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Store" (
-    "id" TEXT NOT NULL DEFAULT uuid_generate_v1(),
+    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -175,3 +175,20 @@ ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("or
 
 -- AddForeignKey
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+create or replace function gen_alphanumeric_id()
+returns text as $$
+declare
+    chars text := '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    result text := '';
+    i int := 0;
+    length int := 20;
+begin
+    for i in 1..length loop
+        result := result || substr(chars, (floor(random() * length(chars) + 1))::int, 1);
+    end loop;
+
+    return result;
+end;
+$$ language plpgsql;

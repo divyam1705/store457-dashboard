@@ -80,9 +80,24 @@ export async function POST(
       );
     }
   );
-
+  function generateAlphanumericId(length:number) {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      result += chars[randomIndex];
+    }
+    return result;
+  }
+  
+  // Example usage
+  const id = generateAlphanumericId(20); // Generate an ID with length 20
+  //TODO REmove console log
+  // console.log(id);
+  
   const order = await prismadb.order.create({
     data: {
+      id:id,
       email: userEmail,
       promoCodeId: promoCodeId,
       storeId: params.storeId,
